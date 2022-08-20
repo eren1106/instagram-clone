@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:instagram_clone/utils/utils.dart';
 
 class SearchScreen extends StatefulWidget {
   SearchScreen({Key? key}) : super(key: key);
@@ -14,10 +15,40 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   bool isShowUsers = false;
+  bool isLoading = false;
+  var users = []; // variable to store all users data
+  var currentUsers = []; //variable to store current searching users data
+
+  @override
+  void initState() {
+    super.initState();
+    getUsers();
+  }
+
+  getUsers() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      QuerySnapshot snap =
+          await FirebaseFirestore.instance.collection('users').get();
+
+      setState(() {
+        users = snap.docs.map((doc) => doc.data()).toList();
+      });
+      print(users);
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     searchController.dispose();
   }
@@ -30,56 +61,48 @@ class _SearchScreenState extends State<SearchScreen> {
         title: TextFormField(
           controller: searchController,
           decoration: const InputDecoration(labelText: 'Search for a user'),
-          onFieldSubmitted: (String _) {
+          onChanged: (String _) {
+            int len = searchController.text.length;
             setState(() {
+              currentUsers = len == 0 ? users : users.where((user)=>user['username'].substring(0, len)==searchController.text).toList();
+            });
+          },
+          onTap: () {
+            setState(() {
+              currentUsers = users;
               isShowUsers = true;
             });
           },
         ),
       ),
       body: isShowUsers
-          ? FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection('users')
-                  .where(
-                    'username',
-                    isGreaterThanOrEqualTo: searchController.text,
-                  )
-                  .get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                return ListView.builder(
-                    itemCount: (snapshot.data! as dynamic).docs.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(
-                                uid: (snapshot.data! as dynamic).docs[index]
-                                    ['uid']),
-                          ),
+          ? isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView.builder(
+                  itemCount: currentUsers.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileScreen(uid: currentUsers[index]['uid']),
                         ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              (snapshot.data! as dynamic).docs[index]
-                                  ['photoUrl'],
-                            ),
-                            radius: 16,
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            currentUsers[index]['photoUrl'],
                           ),
-                          title: Text(
-                            (snapshot.data! as dynamic).docs[index]['username'],
-                          ),
+                          radius: 16,
                         ),
-                      );
-                    });
-              },
-            )
+                        title: Text(
+                          currentUsers[index]['username'],
+                        ),
+                      ),
+                    );
+                  })
           : FutureBuilder(
               future: FirebaseFirestore.instance.collection('posts').get(),
               builder: (context, snapshot) {
