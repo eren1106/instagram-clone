@@ -34,7 +34,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: backgroundColor,
         centerTitle: false,
       ),
       body: StreamBuilder(

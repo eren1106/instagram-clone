@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/providers/color_provider.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
@@ -50,7 +51,7 @@ class _PostCardState extends State<PostCard> {
     final User user = Provider.of<UserProvider>(context).getUser;
 
     return Container(
-      color: mobileBackgroundColor,
+      color: Provider.of<ColorProvider>(context).backgroundColor,
       padding: const EdgeInsets.symmetric(
         vertical: 10,
       ),
@@ -101,7 +102,7 @@ class _PostCardState extends State<PostCard> {
                               .map(
                                 (e) => InkWell(
                                   onTap: () async{
-                                    FirestoreMethods().deletePost(widget.snap['postId']);
+                                    await FirestoreMethods().deletePost(widget.snap['postId']);
                                     Navigator.of(context).pop();
                                   },
                                   child: Container(
@@ -227,7 +228,7 @@ class _PostCardState extends State<PostCard> {
               children: [
                 DefaultTextStyle(
                   style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                       ),
                   child: Text(
                     '${widget.snap['likes'].length} likes',
@@ -241,8 +242,8 @@ class _PostCardState extends State<PostCard> {
                   ),
                   child: RichText(
                     text: TextSpan(
-                      style: const TextStyle(
-                        color: primaryColor,
+                      style: TextStyle(
+                        color: Provider.of<ColorProvider>(context).primaryColor,
                       ),
                       children: [
                         TextSpan(

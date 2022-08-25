@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/screens/feed_screen.dart';
 import 'package:instagram_clone/screens/signup_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 import 'package:instagram_clone/resources/auth_methods.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/color_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -67,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SvgPicture.asset(
                 'assets/ic_instagram.svg',
-                color: primaryColor,
+                color: Provider.of<ColorProvider>(context).primaryColor,
                 height: 64,
               ),
               const SizedBox(height: 64),

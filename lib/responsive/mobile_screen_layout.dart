@@ -7,6 +7,7 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/color_provider.dart';
 import '../providers/user_provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
@@ -46,51 +47,55 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         controller: pageController,
         onPageChanged: onPageChanged,
       ),
-      bottomNavigationBar: CupertinoTabBar(
-        backgroundColor: mobileBackgroundColor,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: _page == 0 ? primaryColor : secondaryColor,
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(top: 5),
+        child: CupertinoTabBar(
+          border: Border(bottom: BorderSide(color: Colors.transparent)),
+          backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                color: _page == 0 ? Provider.of<ColorProvider>(context).primaryColor : secondaryColor,
+              ),
+              label: '',
+              backgroundColor: Provider.of<ColorProvider>(context).primaryColor,
             ),
-            label: '',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-              color: _page == 1 ? primaryColor : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+                color: _page == 1 ? Provider.of<ColorProvider>(context).primaryColor : secondaryColor,
+              ),
+              label: '',
+              backgroundColor: Provider.of<ColorProvider>(context).primaryColor,
             ),
-            label: '',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.add_circle,
-              color: _page == 2 ? primaryColor : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.add_circle,
+                color: _page == 2 ? Provider.of<ColorProvider>(context).primaryColor : Provider.of<ColorProvider>(context).secondaryColor,
+              ),
+              label: '',
+              backgroundColor: Provider.of<ColorProvider>(context).primaryColor,
             ),
-            label: '',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.favorite,
-              color: _page == 3 ? primaryColor : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.favorite,
+                color: _page == 3 ? Provider.of<ColorProvider>(context).primaryColor : Provider.of<ColorProvider>(context).secondaryColor,
+              ),
+              label: '',
+              backgroundColor: Provider.of<ColorProvider>(context).primaryColor,
             ),
-            label: '',
-            backgroundColor: primaryColor,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: _page == 4 ? primaryColor : secondaryColor,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
+                color: _page == 4 ? Provider.of<ColorProvider>(context).primaryColor : Provider.of<ColorProvider>(context).secondaryColor,
+              ),
+              label: '',
+              backgroundColor: Provider.of<ColorProvider>(context).primaryColor,
             ),
-            label: '',
-            backgroundColor: primaryColor,
-          ),
-        ],
-        onTap: navigationTapped,
+          ],
+          onTap: navigationTapped,
+        ),
       ),
     );
   }

@@ -9,6 +9,9 @@ import 'package:instagram_clone/responsive/web_screen_layout.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/color_provider.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -88,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               SvgPicture.asset(
                 'assets/ic_instagram.svg',
-                color: primaryColor,
+                color: Provider.of<ColorProvider>(context).primaryColor,
                 height: 64,
               ),
               SizedBox(

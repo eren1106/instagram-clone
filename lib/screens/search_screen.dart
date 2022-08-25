@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_clone/utils/utils.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/color_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   SearchScreen({Key? key}) : super(key: key);
@@ -37,7 +41,6 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         users = snap.docs.map((doc) => doc.data()).toList();
       });
-      print(users);
     } catch (e) {
       showSnackBar(e.toString(), context);
     }
@@ -57,14 +60,20 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
         title: TextFormField(
           controller: searchController,
           decoration: const InputDecoration(labelText: 'Search for a user'),
           onChanged: (String _) {
             int len = searchController.text.length;
             setState(() {
-              currentUsers = len == 0 ? users : users.where((user)=>user['username'].substring(0, len)==searchController.text).toList();
+              currentUsers = len == 0
+                  ? users
+                  : users
+                      .where((user) =>
+                          user['username'].substring(0, len) ==
+                          searchController.text)
+                      .toList();
             });
           },
           onTap: () {
@@ -74,6 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
             });
           },
         ),
+        elevation: 1,
       ),
       body: isShowUsers
           ? isLoading
@@ -115,9 +125,19 @@ class _SearchScreenState extends State<SearchScreen> {
                 return StaggeredGridView.countBuilder(
                   crossAxisCount: 3,
                   itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) => Image.network(
-                    (snapshot.data! as dynamic).docs[index]['postUrl'],
-                    fit: BoxFit.cover,
+                  itemBuilder: (context, index) => InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PostScreen(
+                              snap: (snapshot.data! as dynamic).docs[index]),
+                        ),
+                      );
+                    },
+                    child: Image.network(
+                      (snapshot.data! as dynamic).docs[index]['postUrl'],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   staggeredTileBuilder: (index) => StaggeredTile.count(
                     (index % 7 == 0) ? 2 : 1,

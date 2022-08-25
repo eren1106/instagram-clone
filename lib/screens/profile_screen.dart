@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/resources/auth_methods.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/color_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
@@ -70,9 +74,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )
         : Scaffold(
             appBar: AppBar(
-              backgroundColor: mobileBackgroundColor,
-              title: Text(userData['username']),
+              backgroundColor:
+                  Provider.of<ColorProvider>(context).backgroundColor,
+              title: Text(
+                userData['username'],
+                style: TextStyle(
+                    color: Provider.of<ColorProvider>(context).primaryColor),
+              ),
               centerTitle: false,
+              elevation: 1,
+              iconTheme: IconThemeData(
+                color: Provider.of<ColorProvider>(context)
+                    .primaryColor, //change your color here
+              ),
             ),
             body: ListView(
               children: [
@@ -111,8 +125,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ? FollowButton(
                                             text: 'Sign Out',
                                             backgroundColor:
-                                                mobileBackgroundColor,
-                                            textColor: primaryColor,
+                                                    Provider.of<ColorProvider>(context).backgroundColor,
+                                                textColor: Provider.of<ColorProvider>(context).primaryColor,
                                             borderColor: Colors.grey,
                                             function: () async {
                                               await AuthMethods().signOut();
@@ -129,9 +143,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ? FollowButton(
                                                 text: 'Unfollow',
                                                 backgroundColor:
-                                                    mobileBackgroundColor,
-                                                textColor: primaryColor,
-                                                borderColor: Colors.grey,
+                                                    Provider.of<ColorProvider>(context).backgroundColor,
+                                                textColor: Provider.of<ColorProvider>(context).primaryColor,
+                                                borderColor: Provider.of<ColorProvider>(context).secondaryColor,
                                                 function: () async {
                                                   await FirestoreMethods()
                                                       .followUser(
@@ -215,10 +229,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           DocumentSnapshot snap =
                               (snapshot.data! as dynamic).docs[index];
 
-                          return Container(
-                            child: Image.network(
-                              (snap.data()! as dynamic)['postUrl'],
-                              fit: BoxFit.cover,
+                          return InkWell(
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PostScreen(snap: snap),
+                              ),
+                            ),
+                            child: Container(
+                              child: Image.network(
+                                (snap.data()! as dynamic)['postUrl'],
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           );
                         },
