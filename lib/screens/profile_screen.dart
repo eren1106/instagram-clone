@@ -13,6 +13,7 @@ import 'package:instagram_clone/widgets/follow_button.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/color_provider.dart';
+import '../providers/user_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
@@ -65,6 +66,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  refreshUser() async{
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    await _userProvider.refreshUser();
   }
 
   @override
@@ -166,6 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           FirebaseAuth.instance
                                                               .currentUser!.uid,
                                                           userData['uid']);
+                                                  
+                                                  refreshUser();
 
                                                   setState(() {
                                                     isFollowing = false;
@@ -184,6 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           FirebaseAuth.instance
                                                               .currentUser!.uid,
                                                           userData['uid']);
+
+                                                  refreshUser();
 
                                                   setState(() {
                                                     isFollowing = true;
