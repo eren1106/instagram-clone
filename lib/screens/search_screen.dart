@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
@@ -102,9 +103,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            currentUsers[index]['photoUrl'],
-                          ),
+                          backgroundImage: CachedNetworkImageProvider(currentUsers[index]['photoUrl'],),
                           radius: 16,
                         ),
                         title: Text(

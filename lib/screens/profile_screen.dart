@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -98,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           CircleAvatar(
                             backgroundColor: Colors.grey,
-                            backgroundImage: NetworkImage(
+                            backgroundImage: CachedNetworkImageProvider(
                               userData['photoUrl'],
                             ),
                             radius: 40,
@@ -125,8 +126,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ? FollowButton(
                                             text: 'Sign Out',
                                             backgroundColor:
-                                                    Provider.of<ColorProvider>(context).backgroundColor,
-                                                textColor: Provider.of<ColorProvider>(context).primaryColor,
+                                                Provider.of<ColorProvider>(
+                                                        context)
+                                                    .backgroundColor,
+                                            textColor:
+                                                Provider.of<ColorProvider>(
+                                                        context)
+                                                    .primaryColor,
                                             borderColor: Colors.grey,
                                             function: () async {
                                               await AuthMethods().signOut();
@@ -143,9 +149,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ? FollowButton(
                                                 text: 'Unfollow',
                                                 backgroundColor:
-                                                    Provider.of<ColorProvider>(context).backgroundColor,
-                                                textColor: Provider.of<ColorProvider>(context).primaryColor,
-                                                borderColor: Provider.of<ColorProvider>(context).secondaryColor,
+                                                    Provider.of<ColorProvider>(
+                                                            context)
+                                                        .backgroundColor,
+                                                textColor:
+                                                    Provider.of<ColorProvider>(
+                                                            context)
+                                                        .primaryColor,
+                                                borderColor:
+                                                    Provider.of<ColorProvider>(
+                                                            context)
+                                                        .secondaryColor,
                                                 function: () async {
                                                   await FirestoreMethods()
                                                       .followUser(
@@ -236,8 +250,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             child: Container(
-                              child: Image.network(
-                                (snap.data()! as dynamic)['postUrl'],
+                              child: Image(
+                                image: CachedNetworkImageProvider(
+                                  (snap.data()! as dynamic)['postUrl'],
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),

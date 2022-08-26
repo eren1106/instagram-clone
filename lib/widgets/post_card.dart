@@ -6,11 +6,13 @@ import 'package:instagram_clone/providers/color_provider.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
+import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PostCard extends StatefulWidget {
   final snap;
@@ -65,10 +67,17 @@ class _PostCardState extends State<PostCard> {
             ).copyWith(right: 0),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundImage: NetworkImage(
-                    widget.snap['profImage'],
+                InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(uid: widget.snap['uid']),
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundImage:
+                        CachedNetworkImageProvider(widget.snap['profImage']),
                   ),
                 ),
                 Expanded(
@@ -101,8 +110,9 @@ class _PostCardState extends State<PostCard> {
                           ]
                               .map(
                                 (e) => InkWell(
-                                  onTap: () async{
-                                    await FirestoreMethods().deletePost(widget.snap['postId']);
+                                  onTap: () async {
+                                    await FirestoreMethods()
+                                        .deletePost(widget.snap['postId']);
                                     Navigator.of(context).pop();
                                   },
                                   child: Container(
@@ -140,8 +150,8 @@ class _PostCardState extends State<PostCard> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.35,
                   width: double.infinity,
-                  child: Image.network(
-                    widget.snap['postUrl'],
+                  child: Image(
+                    image: CachedNetworkImageProvider(widget.snap['postUrl']),
                     fit: BoxFit.cover,
                   ),
                 ),
