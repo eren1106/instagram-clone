@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/color_provider.dart';
 import '../widgets/comment_card.dart';
 
 class CommentsScreen extends StatefulWidget {
@@ -34,7 +36,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
-        backgroundColor: backgroundColor,
+        backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
         centerTitle: false,
       ),
       body: StreamBuilder(
@@ -68,9 +70,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(
-                  user.photoUrl,
-                ),
+                backgroundImage: CachedNetworkImageProvider(user.photoUrl),
                 radius: 18,
               ),
               Expanded(

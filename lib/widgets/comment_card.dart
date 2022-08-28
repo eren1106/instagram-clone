@@ -1,5 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/utils/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/color_provider.dart';
 
 class CommentCard extends StatefulWidget {
   final snap;
@@ -10,8 +18,30 @@ class CommentCard extends StatefulWidget {
 }
 
 class _CommentCardState extends State<CommentCard> {
+  
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
+    bool isLiked = widget.snap['likes'].contains(user.uid);
+    int likesLen = widget.snap['likes'].length;
+
+    void likeComment() async {
+      try {
+        await FirestoreMethods().likeComment(
+          widget.snap['postId'],
+          widget.snap['commentId'],
+          user.uid,
+          widget.snap['likes'],
+        );
+        setState(() {
+          likesLen += isLiked ? -1 : 1;
+          isLiked = !isLiked;
+        });
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 18,
@@ -20,7 +50,7 @@ class _CommentCardState extends State<CommentCard> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
+            backgroundImage: CachedNetworkImageProvider(
               widget.snap['profilePic'],
             ),
             radius: 18,
@@ -37,24 +67,46 @@ class _CommentCardState extends State<CommentCard> {
                       children: [
                         TextSpan(
                           text: widget.snap['name'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         TextSpan(
                           text: ' ${widget.snap['text']}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      DateFormat.yMMMd().format(widget.snap['datePublished'].toDate()),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
+                    child: Row(
+                      children: [
+                        Text(
+                          DateFormat.yMMMd()
+                              .format(widget.snap['datePublished'].toDate()),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Provider.of<ColorProvider>(context)
+                                .secondaryColor,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            '${likesLen} likes',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Provider.of<ColorProvider>(context)
+                                  .secondaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -63,7 +115,18 @@ class _CommentCardState extends State<CommentCard> {
           ),
           Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.favorite, size: 16,),
+            child: isLiked
+                ? InkWell(
+                    onTap: likeComment,
+                    child: Icon(Icons.favorite, size: 16, color: Colors.pink))
+                : InkWell(
+                    onTap: likeComment,
+                    child: Icon(
+                      Icons.favorite_border_outlined,
+                      size: 16,
+                      color: Provider.of<ColorProvider>(context).primaryColor,
+                    ),
+                  ),
           ),
         ],
       ),
