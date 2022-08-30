@@ -18,6 +18,7 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
+  
   int _page = 0;
   late PageController pageController;
 
@@ -25,7 +26,13 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    addData();
     pageController = PageController();
+  }
+
+  addData() async{
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    await _userProvider.refreshUser();
   }
 
   void navigationTapped(int page){

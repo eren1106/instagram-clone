@@ -134,8 +134,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       );
                     },
-                    child: Image.network(
-                      (snapshot.data! as dynamic).docs[index]['postUrl'],
+                    child: Image(
+                      image: CachedNetworkImageProvider((snapshot.data! as dynamic).docs[index]['postUrl'],),
                       fit: BoxFit.cover,
                     ),
                   ),

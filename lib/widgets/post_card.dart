@@ -49,6 +49,35 @@ class _PostCardState extends State<PostCard> {
     setState(() {});
   }
 
+  String convertToAgo(DateTime input) {
+      Duration diff = DateTime.now().difference(input);
+
+      if (diff.inDays > 7) {
+        int weeks = (diff.inDays / 7).toInt();
+        return '${weeks} weeks ago';
+      } else if (diff.inDays == 7) {
+        return '1 week ago';
+      } else if (diff.inDays > 1) {
+        return '${diff.inDays} days ago';
+      } else if (diff.inDays == 1) {
+        return '1 day ago';
+      } else if (diff.inHours > 1) {
+        return '${diff.inHours} hours ago';
+      } else if (diff.inHours == 1) {
+        return '1 hour ago';
+      } else if (diff.inMinutes > 1) {
+        return '${diff.inMinutes} minutes ago';
+      } else if (diff.inMinutes == 1) {
+        return '1 minute ago';
+      } else if (diff.inSeconds >= 1) {
+        return '${diff.inSeconds} seconds ago';
+      } else if (diff.inSeconds == 1) {
+        return '1 second ago';
+      } else {
+        return 'just now';
+      }
+    }
+
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
 
@@ -295,10 +324,9 @@ class _PostCardState extends State<PostCard> {
                     vertical: 4,
                   ),
                   child: Text(
-                    DateFormat.yMMMd()
-                        .format(widget.snap['datePublished'].toDate()),
+                    convertToAgo(widget.snap['datePublished'].toDate()),
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: secondaryColor,
                     ),
                   ),

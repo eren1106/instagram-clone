@@ -18,7 +18,6 @@ class CommentCard extends StatefulWidget {
 }
 
 class _CommentCardState extends State<CommentCard> {
-  
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
@@ -39,6 +38,25 @@ class _CommentCardState extends State<CommentCard> {
         });
       } catch (e) {
         print(e.toString());
+      }
+    }
+
+    String convertToAgo(DateTime input) {
+      Duration diff = DateTime.now().difference(input);
+
+      if (diff.inDays >= 7) {
+        int weeks = (diff.inDays / 7).toInt();
+        return '${weeks}w';
+      }  else if (diff.inDays >= 1) {
+        return '${diff.inDays}d';
+      }  else if (diff.inHours >= 1) {
+        return '${diff.inHours}h';
+      }  else if (diff.inMinutes >= 1) {
+        return '${diff.inMinutes}m';
+      }  else if (diff.inSeconds >= 1) {
+        return '${diff.inSeconds}s';
+      }  else {
+        return 'just now';
       }
     }
 
@@ -73,9 +91,6 @@ class _CommentCardState extends State<CommentCard> {
                         ),
                         TextSpan(
                           text: ' ${widget.snap['text']}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
                         ),
                       ],
                     ),
@@ -85,8 +100,7 @@ class _CommentCardState extends State<CommentCard> {
                     child: Row(
                       children: [
                         Text(
-                          DateFormat.yMMMd()
-                              .format(widget.snap['datePublished'].toDate()),
+                          convertToAgo(widget.snap['datePublished'].toDate()),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
