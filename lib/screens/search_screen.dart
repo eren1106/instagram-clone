@@ -60,6 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
         title: TextFormField(
