@@ -7,6 +7,7 @@ import 'package:instagram_clone/resources/auth_methods.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
+import 'package:instagram_clone/screens/user_list_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
@@ -26,10 +27,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   var userData = {};
   int postLen = 0;
-  int followers = 0;
-  int following = 0;
+  List followers = [];
+  List following = [];
+  int followersLen = 0;
+  int followingLen = 0;
   bool isFollowing = false;
   bool isLoading = false;
+  List allUsersData = [];
+  List followersData = [];
+  List followingData = [];
 
   @override
   void initState() {
@@ -53,8 +59,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .get();
       postLen = postSnap.docs.length;
       userData = userSnap.data()!;
-      followers = userSnap.data()!['followers'].length;
-      following = userSnap.data()!['following'].length;
+      followers = userSnap.data()!['followers'];
+      following = userSnap.data()!['following'];
+      followersLen = followers.length;
+      followingLen = following.length;
+      QuerySnapshot snap = await FirebaseFirestore.instance.collection('users').get();
+      allUsersData = snap.docs.map((doc) => doc.data()).toList();
+      followersData = allUsersData.where((user)=>followers.contains(user['uid'])).toList();
+      followingData = allUsersData.where((user)=>following.contains(user['uid'])).toList();
       isFollowing = userSnap
           .data()!['followers']
           .contains(FirebaseAuth.instance.currentUser!.uid);
@@ -118,9 +130,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    buildStatColumn(postLen, 'Posts'),
-                                    buildStatColumn(followers, 'Followers'),
-                                    buildStatColumn(following, 'Following')
+                                    PostStatColumn(postLen, 'Posts'),
+                                    FollowStatColumn(followersLen, 'Followers', followersData),
+                                    FollowStatColumn(followingLen, 'Following', followingData)
                                   ],
                                 ),
                                 Row(
@@ -177,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                                                   setState(() {
                                                     isFollowing = false;
-                                                    followers--;
+                                                    followersLen--;
                                                   });
                                                 },
                                               )
@@ -197,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                                                   setState(() {
                                                     isFollowing = true;
-                                                    followers++;
+                                                    followersLen++;
                                                   });
                                                 },
                                               ),
@@ -279,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
   }
 
-  Column buildStatColumn(int num, String label) {
+  Column PostStatColumn(int num, String label) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -303,6 +315,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  InkWell FollowStatColumn(int num, String label, List users) {
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UserListScreen(title: label, users: users),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            num.toString(),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

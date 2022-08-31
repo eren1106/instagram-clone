@@ -6,6 +6,7 @@ import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_clone/utils/utils.dart';
+import 'package:instagram_clone/widgets/user_list.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/color_provider.dart';
@@ -92,27 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : ListView.builder(
-                  itemCount: currentUsers.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProfileScreen(uid: currentUsers[index]['uid']),
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(currentUsers[index]['photoUrl'],),
-                          radius: 16,
-                        ),
-                        title: Text(
-                          currentUsers[index]['username'],
-                        ),
-                      ),
-                    );
-                  })
+              : UserList(users: currentUsers)
           : FutureBuilder(
               future: FirebaseFirestore.instance.collection('posts').get(),
               builder: (context, snapshot) {
@@ -135,7 +116,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       );
                     },
                     child: Image(
-                      image: CachedNetworkImageProvider((snapshot.data! as dynamic).docs[index]['postUrl'],),
+                      image: CachedNetworkImageProvider(
+                        (snapshot.data! as dynamic).docs[index]['postUrl'],
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
