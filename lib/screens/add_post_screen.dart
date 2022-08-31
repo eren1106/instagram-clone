@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/models/user.dart';
@@ -95,7 +96,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         });
   }
 
-  void clearImage(){
+  void clearImage() {
     setState(() {
       _file = null;
     });
@@ -150,16 +151,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(
               children: [
-                _isLoading
-                    ? const LinearProgressIndicator()
-                    : Container(),
+                _isLoading ? const LinearProgressIndicator() : Container(),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
+                      backgroundImage: CachedNetworkImageProvider(
                         user.photoUrl,
                       ),
                     ),

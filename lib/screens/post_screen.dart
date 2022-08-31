@@ -23,7 +23,7 @@ class _PostScreenState extends State<PostScreen> {
         backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
         elevation: 1,
         iconTheme: IconThemeData(
-          color: Provider.of<ColorProvider>(context).primaryColor, //change your color here
+          color: Provider.of<ColorProvider>(context).primaryColor,
         ),
       ),
       body: PostCard(snap: widget.snap),

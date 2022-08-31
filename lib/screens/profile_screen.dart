@@ -258,7 +258,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialPageRoute(
                                 builder: (context) => PostScreen(snap: snap),
                               ),
-                            ),
+                            ).then((value){
+                              
+                              getData();
+                            }),
                             child: Container(
                               child: Image(
                                 image: CachedNetworkImageProvider(
