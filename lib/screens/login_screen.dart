@@ -10,6 +10,7 @@ import 'package:instagram_clone/resources/auth_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/color_provider.dart';
+import '../responsive/mobile_screen_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -42,7 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
     print(res);
     
     if (res == 'success') {
-      
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const MobileScreenLayout(),
+        ),
+      );
     } else {
       showSnackBar(res, context);
     }
