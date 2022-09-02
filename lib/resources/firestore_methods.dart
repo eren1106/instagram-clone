@@ -5,6 +5,8 @@ import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/user.dart';
+
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -142,6 +144,30 @@ class FirestoreMethods {
         );
       }
     } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> savePost(String uid, String postId) async{
+    DocumentSnapshot userSnap = await _firestore.collection('users').doc(uid).get();
+    User user = User.fromSnap(userSnap);
+    try{
+      if(user.saved.contains(postId)){
+        await _firestore.collection('users').doc(uid).update(
+          {
+            'saved': FieldValue.arrayRemove([postId])
+          }
+        );
+      }
+      else{
+        await _firestore.collection('users').doc(uid).update(
+          {
+            'saved': FieldValue.arrayUnion([postId])
+          }
+        );
+      }
+    }
+    catch(e){
       print(e.toString());
     }
   }

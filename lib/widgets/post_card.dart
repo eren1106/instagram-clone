@@ -26,10 +26,12 @@ class _PostCardState extends State<PostCard> {
   @override
   bool isLikeAnimating = false;
   int commentLen = 0;
+  
+  bool isSaved = false;
+  bool refreshed = false; //this variable to make sure isSaved inside setState work
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getComments();
   }
@@ -50,36 +52,52 @@ class _PostCardState extends State<PostCard> {
   }
 
   String convertToAgo(DateTime input) {
-      Duration diff = DateTime.now().difference(input);
+    Duration diff = DateTime.now().difference(input);
 
-      if (diff.inDays > 7) {
-        int weeks = (diff.inDays / 7).toInt();
-        return '${weeks} weeks ago';
-      } else if (diff.inDays == 7) {
-        return '1 week ago';
-      } else if (diff.inDays > 1) {
-        return '${diff.inDays} days ago';
-      } else if (diff.inDays == 1) {
-        return '1 day ago';
-      } else if (diff.inHours > 1) {
-        return '${diff.inHours} hours ago';
-      } else if (diff.inHours == 1) {
-        return '1 hour ago';
-      } else if (diff.inMinutes > 1) {
-        return '${diff.inMinutes} minutes ago';
-      } else if (diff.inMinutes == 1) {
-        return '1 minute ago';
-      } else if (diff.inSeconds >= 1) {
-        return '${diff.inSeconds} seconds ago';
-      } else if (diff.inSeconds == 1) {
-        return '1 second ago';
-      } else {
-        return 'just now';
+    if (diff.inDays > 7) {
+      int weeks = (diff.inDays / 7).toInt();
+      return '${weeks} weeks ago';
+    } else if (diff.inDays == 7) {
+      return '1 week ago';
+    } else if (diff.inDays > 1) {
+      return '${diff.inDays} days ago';
+    } else if (diff.inDays == 1) {
+      return '1 day ago';
+    } else if (diff.inHours > 1) {
+      return '${diff.inHours} hours ago';
+    } else if (diff.inHours == 1) {
+      return '1 hour ago';
+    } else if (diff.inMinutes > 1) {
+      return '${diff.inMinutes} minutes ago';
+    } else if (diff.inMinutes == 1) {
+      return '1 minute ago';
+    } else if (diff.inSeconds >= 1) {
+      return '${diff.inSeconds} seconds ago';
+    } else if (diff.inSeconds == 1) {
+      return '1 second ago';
+    } else {
+      return 'just now';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) { //build mean the part that will rebuild for every setState
+    
+    User user = Provider.of<UserProvider>(context).getUser;
+    if(!refreshed){
+      isSaved = user.saved.contains(widget.snap['postId']);
+      refreshed = true;
+    }
+    void toggleSavePost() async {
+      try {
+        setState(() {
+          isSaved = !isSaved;
+        });
+        await FirestoreMethods().savePost(user.uid, widget.snap['postId']);
+      } catch (e) {
+        print(e.toString());
       }
     }
-
-  Widget build(BuildContext context) {
-    final User user = Provider.of<UserProvider>(context).getUser;
 
     return Container(
       color: Provider.of<ColorProvider>(context).backgroundColor,
@@ -100,7 +118,8 @@ class _PostCardState extends State<PostCard> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(uid: widget.snap['uid']),
+                      builder: (context) =>
+                          ProfileScreen(uid: widget.snap['uid']),
                     ),
                   ),
                   child: CircleAvatar(
@@ -142,7 +161,8 @@ class _PostCardState extends State<PostCard> {
                                   onTap: () async {
                                     await FirestoreMethods()
                                         .deletePost(widget.snap['postId']);
-                                    Navigator.of(context).popUntil((route) => route.isFirst);
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -245,12 +265,19 @@ class _PostCardState extends State<PostCard> {
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.bookmark_border,
-                    ),
-                    onPressed: () {},
-                  ),
+                  child: isSaved
+                      ? InkWell(
+                          onTap: toggleSavePost,
+                          child: Icon(
+                            Icons.bookmark,
+                          ),
+                        )
+                      : InkWell(
+                          onTap: toggleSavePost,
+                          child: Icon(
+                            Icons.bookmark_outline,
+                          ),
+                        ),
                 ),
               ),
             ],

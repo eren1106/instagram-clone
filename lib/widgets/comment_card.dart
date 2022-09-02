@@ -47,15 +47,15 @@ class _CommentCardState extends State<CommentCard> {
       if (diff.inDays >= 7) {
         int weeks = (diff.inDays / 7).toInt();
         return '${weeks}w';
-      }  else if (diff.inDays >= 1) {
+      } else if (diff.inDays >= 1) {
         return '${diff.inDays}d';
-      }  else if (diff.inHours >= 1) {
+      } else if (diff.inHours >= 1) {
         return '${diff.inHours}h';
-      }  else if (diff.inMinutes >= 1) {
+      } else if (diff.inMinutes >= 1) {
         return '${diff.inMinutes}m';
-      }  else if (diff.inSeconds >= 1) {
+      } else if (diff.inSeconds >= 1) {
         return '${diff.inSeconds}s';
-      }  else {
+      } else {
         return 'just now';
       }
     }
@@ -132,7 +132,12 @@ class _CommentCardState extends State<CommentCard> {
             child: isLiked
                 ? InkWell(
                     onTap: likeComment,
-                    child: Icon(Icons.favorite, size: 16, color: Colors.pink))
+                    child: Icon(
+                      Icons.favorite,
+                      size: 16,
+                      color: Colors.pink,
+                    ),
+                  )
                 : InkWell(
                     onTap: likeComment,
                     child: Icon(

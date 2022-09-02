@@ -49,6 +49,7 @@ class AuthMethods {
           followers: [],
           following: [],
           photoUrl: photoUrl,
+          saved: [],
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
