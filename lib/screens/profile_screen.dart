@@ -80,11 +80,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  refreshUser() async{
-    UserProvider _userProvider = Provider.of(context, listen: false);
-    await _userProvider.refreshUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -185,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               .currentUser!.uid,
                                                           userData['uid']);
                                                   
-                                                  refreshUser();
+                                                  
 
                                                   setState(() {
                                                     isFollowing = false;
@@ -205,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               .currentUser!.uid,
                                                           userData['uid']);
 
-                                                  refreshUser();
+                                                  
 
                                                   setState(() {
                                                     isFollowing = true;

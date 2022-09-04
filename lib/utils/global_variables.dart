@@ -7,11 +7,3 @@ import 'package:instagram_clone/screens/saved_screen.dart';
 import 'package:instagram_clone/screens/search_screen.dart';
 
 const webScreenSize = 600;
-
-var homeScreenItems = [
-  FeedScreen(),
-  SearchScreen(),
-  AddPostScreen(),
-  SavedScreen(),
-  ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid),
-];

@@ -8,9 +8,15 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
 import 'package:provider/provider.dart';
 
-class FeedScreen extends StatelessWidget {
+class FeedScreen extends StatefulWidget {
   const FeedScreen({Key? key}) : super(key: key);
-  
+
+  @override
+  State<FeedScreen> createState() => _FeedScreenState();
+}
+
+class _FeedScreenState extends State<FeedScreen> {
+
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context).getUser;
@@ -28,7 +34,8 @@ class FeedScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              ColorProvider _colorProvider = Provider.of(context, listen: false);
+              ColorProvider _colorProvider =
+                  Provider.of(context, listen: false);
               _colorProvider.toggleDark();
             },
             icon: Icon(
@@ -40,22 +47,26 @@ class FeedScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').where('uid', whereIn: [...user.following, user.uid]).snapshots(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) => PostCard(
-                snap: snapshot.data!.docs[index].data(),
-              ),
-            );
-          }),
+      body: user == null
+          ? Center(child: CircularProgressIndicator())
+          : StreamBuilder(
+              stream: FirebaseFirestore.instance.collection('posts').where(
+                  'uid',
+                  whereIn: [...user.following, user.uid]).snapshots(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) => PostCard(
+                    snap: snapshot.data!.docs[index].data(),
+                  ),
+                );
+              }),
     );
   }
 }
