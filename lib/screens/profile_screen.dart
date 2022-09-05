@@ -63,10 +63,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       following = userSnap.data()!['following'];
       followersLen = followers.length;
       followingLen = following.length;
-      QuerySnapshot snap = await FirebaseFirestore.instance.collection('users').get();
+      QuerySnapshot snap =
+          await FirebaseFirestore.instance.collection('users').get();
       allUsersData = snap.docs.map((doc) => doc.data()).toList();
-      followersData = allUsersData.where((user)=>followers.contains(user['uid'])).toList();
-      followingData = allUsersData.where((user)=>following.contains(user['uid'])).toList();
+      followersData = allUsersData
+          .where((user) => followers.contains(user['uid']))
+          .toList();
+      followingData = allUsersData
+          .where((user) => following.contains(user['uid']))
+          .toList();
       isFollowing = userSnap
           .data()!['followers']
           .contains(FirebaseAuth.instance.currentUser!.uid);
@@ -126,8 +131,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     PostStatColumn(postLen, 'Posts'),
-                                    FollowStatColumn(followersLen, 'Followers', followersData),
-                                    FollowStatColumn(followingLen, 'Following', followingData)
+                                    FollowStatColumn(followersLen, 'Followers',
+                                        followersData),
+                                    FollowStatColumn(followingLen, 'Following',
+                                        followingData)
                                   ],
                                 ),
                                 Row(
@@ -179,8 +186,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           FirebaseAuth.instance
                                                               .currentUser!.uid,
                                                           userData['uid']);
-                                                  
-                                                  
 
                                                   setState(() {
                                                     isFollowing = false;
@@ -199,8 +204,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           FirebaseAuth.instance
                                                               .currentUser!.uid,
                                                           userData['uid']);
-
-                                                  
 
                                                   setState(() {
                                                     isFollowing = true;
@@ -252,8 +255,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 1.5,
+                          crossAxisSpacing: 3,
+                          mainAxisSpacing: 3,
                           childAspectRatio: 1,
                         ),
                         itemBuilder: (context, index) {
@@ -261,12 +264,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               (snapshot.data! as dynamic).docs[index];
 
                           return InkWell(
-                            onTap: () => Navigator.of(context).push(
+                            onTap: () => Navigator.of(context)
+                                .push(
                               MaterialPageRoute(
                                 builder: (context) => PostScreen(snap: snap),
                               ),
-                            ).then((value){
-                              
+                            )
+                                .then((value) {
                               getData();
                             }),
                             child: Container(

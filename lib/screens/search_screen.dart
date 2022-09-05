@@ -63,6 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Provider.of<ColorProvider>(context).backgroundColor,
         title: TextFormField(
           controller: searchController,
