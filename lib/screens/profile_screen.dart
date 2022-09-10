@@ -249,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       }
 
-                      return GridView.builder(
+                      return (snapshot.data! as dynamic).docs.length > 0 ? GridView.builder(
                         shrinkWrap: true,
                         itemCount: (snapshot.data! as dynamic).docs.length,
                         gridDelegate:
@@ -283,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         },
-                      );
+                      ) : Center(child: Text("You haven't posted anything yet!"),);
                     }),
               ],
             ),

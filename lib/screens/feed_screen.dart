@@ -47,9 +47,7 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
         ],
       ),
-      body: user == null
-          ? Center(child: CircularProgressIndicator())
-          : StreamBuilder(
+      body: StreamBuilder(
               stream: FirebaseFirestore.instance.collection('posts').where(
                   'uid',
                   whereIn: [...user.following, user.uid]).snapshots(),
@@ -60,12 +58,12 @@ class _FeedScreenState extends State<FeedScreen> {
                   );
                 }
 
-                return ListView.builder(
+                return snapshot.data!.docs.length > 0 ? ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) => PostCard(
                     snap: snapshot.data!.docs[index].data(),
                   ),
-                );
+                ) : Center(child: Text("You haven't followed anyone yet!"),);
               }),
     );
   }
