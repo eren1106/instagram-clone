@@ -21,6 +21,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
@@ -44,6 +45,10 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void signUpUser() async {
+    if(_passwordController.text != _confirmPasswordController.text){
+      showSnackBar('password and confirm-password are different', context);
+      return;
+    }
     setState(() {
       _isLoading = true;
     });
@@ -146,6 +151,15 @@ class _SignupScreenState extends State<SignupScreen> {
                       isPass: true,
                       textEditingController: _passwordController,
                       hintText: 'Enter your password',
+                      textInputType: TextInputType.text,
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    TextFieldInput(
+                      isPass: true,
+                      textEditingController: _confirmPasswordController,
+                      hintText: 'Confirm your password',
                       textInputType: TextInputType.text,
                     ),
                     SizedBox(
