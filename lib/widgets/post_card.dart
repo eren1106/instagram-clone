@@ -26,9 +26,10 @@ class _PostCardState extends State<PostCard> {
   @override
   bool isLikeAnimating = false;
   int commentLen = 0;
-  
+
   bool isSaved = false;
-  bool refreshed = false; //this variable to make sure isSaved inside setState work
+  bool refreshed =
+      false; //this variable to make sure isSaved inside setState work
 
   @override
   void initState() {
@@ -81,10 +82,11 @@ class _PostCardState extends State<PostCard> {
   }
 
   @override
-  Widget build(BuildContext context) { //build mean the part that will rebuild for every setState
-    
+  Widget build(BuildContext context) {
+    //build mean the part that will rebuild for every setState
+
     User user = Provider.of<UserProvider>(context).getUser;
-    if(!refreshed){
+    if (!refreshed) {
       isSaved = user.saved.contains(widget.snap['postId']);
       refreshed = true;
     }
@@ -159,10 +161,17 @@ class _PostCardState extends State<PostCard> {
                               .map(
                                 (e) => InkWell(
                                   onTap: () async {
-                                    await FirestoreMethods()
-                                        .deletePost(widget.snap['postId']);
-                                    Navigator.of(context)
-                                        .popUntil((route) => route.isFirst);
+                                    if (user.uid == widget.snap['uid']) {
+                                      await FirestoreMethods()
+                                          .deletePost(widget.snap['postId']);
+                                      Navigator.of(context)
+                                          .popUntil((route) => route.isFirst);
+                                    } else {
+                                      Navigator.of(context).pop();
+                                      showSnackBar(
+                                          "You can't delete other user's post!",
+                                          context);
+                                    }
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
